@@ -44,8 +44,14 @@ htmlcov/
 .coverage
 .coverage.*
 .cache
+misc.xml
+modules.xml
+vcs.xml
+workspace.xml
+profiles_settings.xml
 nosetests.xml
 coverage.xml
+*.iml
 *.cover
 *.py,cover
 .hypothesis/
