@@ -81,6 +81,8 @@ train_missing = train_df.isnull().sum()
 test_missing = test_df.isnull().sum()
 
 print(train_missing[train_missing != 0], test_missing[test_missing != 0])
+print(train_df[["LotFrontage", "LotArea"]][train_df.LotFrontage == 0])
+print(train_df[train_df["LotFrontage"].isnull()])
 
 # convert numbers to string to indicate it's a categorical column
 cat_col = ["MSSubClass", "OverallCond", "YrSold", "MoSold"]
@@ -97,6 +99,7 @@ skew_df = pd.DataFrame({'Skewness': skewness})
 skew_df.drop(skew_df[abs(skew_df.Skewness) < 0.75].index, inplace=True)
 
 skewed_cols = skew_df.index
+print(skewed_cols)
 
 pt = PowerTransformer(standardize=False)
 pt.fit(train_df[skewed_cols])
@@ -109,5 +112,10 @@ train_df = pd.get_dummies(train_df)
 test_df = pd.get_dummies(test_df)
 print(train_df[train_df["LotFrontage"].isnull()])
 print(test_df[test_df["LotFrontage"].isnull()])
+train_df
 
 missing_cols = set(train_df.columns) - set(test_df.columns)
+for col in missing_cols:
+    test_df[col] = 0
+
+test_df = test_df[train_df.columns]
