@@ -23,7 +23,7 @@ train_df.drop(train_df[(train_df.GrLivArea > 4000)
                        & (train_df.SalePrice < 300000)].index, inplace=True)
 
 # transform SalePrice using log
-train_df["SalePrice"] = np.log(train_df["SalePrice"])
+train_df["SalePrice"] = np.log1p(train_df["SalePrice"])
 
 # visualise the transformed SalePrice distribution
 sns.distplot(train_df["SalePrice"], fit=norm)
@@ -95,14 +95,19 @@ skewness = train_df[numerical_cols].apply(lambda x: skew(x)).sort_values(ascendi
 skew_df = pd.DataFrame({'Skewness': skewness})
 
 skew_df.drop(skew_df[abs(skew_df.Skewness) < 0.75].index, inplace=True)
-print(skew_df)
 
 skewed_cols = skew_df.index
 
 pt = PowerTransformer(standardize=False)
 pt.fit(train_df[skewed_cols])
-print(pt.lambdas_)
 train_df[skewed_cols] = pd.DataFrame(pt.transform(train_df[skewed_cols]))
+test_df[skewed_cols] = pd.DataFrame(pt.transform(test_df[skewed_cols]))
 
-print(train_df[skewed_cols].skew())
+full_df = pd.concat([train_df, test_df])
 
+train_df = pd.get_dummies(train_df)
+test_df = pd.get_dummies(test_df)
+print(train_df[train_df["LotFrontage"].isnull()])
+print(test_df[test_df["LotFrontage"].isnull()])
+
+missing_cols = set(train_df.columns) - set(test_df.columns)
