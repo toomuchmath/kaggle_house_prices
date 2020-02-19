@@ -7,7 +7,6 @@ from scipy.stats import norm, skew
 from scipy.special import boxcox1p
 from sklearn.preprocessing import PowerTransformer
 
-# import train and test data
 # train_size = (1460, 81)
 train_df = pd.read_csv("data/train.csv")
 test_df = pd.read_csv("data/test.csv")
@@ -19,7 +18,6 @@ test_id = test_df["Id"]
 
 train_df.drop(columns="Id", inplace=True)
 test_df.drop(columns="Id", inplace=True)
-
 
 # deleting outliers (2 of them)
 # train_size = (1458, 80)
