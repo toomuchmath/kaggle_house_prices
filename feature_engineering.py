@@ -118,11 +118,11 @@ pt.fit(train_df[skewed_cols])
 train_df[skewed_cols] = pd.DataFrame(pt.transform(train_df[skewed_cols]))
 test_df[skewed_cols] = pd.DataFrame(pt.transform(test_df[skewed_cols]))
 
-full_df = pd.concat([train_df, test_df])
-
+# get dummies
 train_df = pd.get_dummies(train_df)
 test_df = pd.get_dummies(test_df)
 
+# on inspection, test_df has fewer columns than train_df after .get_dummies()
 missing_cols = set(train_df.columns) - set(test_df.columns)
 for col in missing_cols:
     test_df[col] = 0
