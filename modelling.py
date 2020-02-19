@@ -1,3 +1,5 @@
+import pandas as pd
+import numpy as np
 from sklearn.linear_model import ElasticNet, Lasso, BayesianRidge, LassoLarsIC
 from sklearn.ensemble import RandomForestRegressor, GradientBoostingRegressor, StackingRegressor
 from sklearn.kernel_ridge import KernelRidge
@@ -7,7 +9,7 @@ from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
 from sklearn.model_selection import KFold, cross_val_score, train_test_split
 from sklearn.metrics import make_scorer, mean_squared_error
 import xgboost as xgb
-import lightgbm as lgb
+# import lightgbm as lgb
 
 train_df = pd.read_csv("data/train_df.csv")
 train_y = pd.read_csv("data/train_y.csv")
@@ -17,8 +19,8 @@ test_df = pd.read_csv("data/test_df.csv")
 def get_rmse(model, n_fold):
 
     k_fold = KFold(n_fold, shuffle=True, random_state=1).get_n_splits(train_df.values)
-    rmse_scorer = make_scorer(mean_squared_error(squared=False))
-    rmse = cross_val_score(model, train_df.values, train_y, cv=k_fold, scoring=rmse_scorer)
+    rmse = cross_val_score(model, train_df.values, train_y, cv=k_fold,
+                           scoring="neg_root_mean_squared_error")
 
     return rmse
 
@@ -42,3 +44,19 @@ gbr = GradientBoostingRegressor(n_estimators=3000, learning_rate=0.05, max_depth
 xgb_reg = xgb.XGBRegressor(colsample_bytree=0.4603, gamma=0.0468, learning_rate=0.05,
                            min_child_weight=2, n_estimators=2200, reg_alpha=0.4640, reg=0.8571,
                            subsample=0.5213, silent=True, random_state=1, nthread=-1)
+
+# LightGBM
+"""
+lgbm_reg = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate=0.05, n_estimators=720,
+                             max_bin=55, bagging_fraction=0.8, bagging_freq=5, feature_fraction=0.2319,
+                             feature_fraction_seed=9, bagging_seed=9, min_data_in_leaf=6,
+                             min_sum_hessian_in_leaf=11)
+"""
+lasso_scores = get_rmse(lasso, 5)
+print("Lasso scores: {} \n Average score: {}".format(lasso_scores, lasso_scores.mean()))
+
+enet_scores = get_rmse(enet, 5)
+print("Elastic Net scores: {} \n Average score: {}".format(enet_scores, enet_scores.mean()))
+
+krr_scores = get_rmse(krr, 5)
+print("Kernel Ridge scores: {} \n Average score: {}".format(krr_scores, krr_scores.mean()))
