@@ -1,6 +1,6 @@
 ## House Prices Prediction
 
-This is based on a kaggle competition [House Prices: Advanced Regression Techniques](https://www.kaggle.com/c/house-prices-advanced-regression-techniques)
+This is based on a beginners' kaggle competition [House Prices: Advanced Regression Techniques](https://www.kaggle.com/c/house-prices-advanced-regression-techniques)
 
 In [featureengineering.py](https://github.com/toomuchmath/house_prices/blob/master/feature_engineering.py), 
 my plans were as follows:
