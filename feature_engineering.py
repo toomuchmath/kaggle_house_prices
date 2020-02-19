@@ -8,21 +8,26 @@ from scipy.special import boxcox1p
 from sklearn.preprocessing import PowerTransformer
 
 # import train and test data
+# train_size = (1460, 81)
 train_df = pd.read_csv("data/train.csv")
 test_df = pd.read_csv("data/test.csv")
 
 # save ID column and drop it as it's not needed for prediction
+# train_size = (1460, 80)
 train_id = train_df["Id"]
 test_id = test_df["Id"]
 
 train_df.drop(columns="Id", inplace=True)
 test_df.drop(columns="Id", inplace=True)
 
-# deleting outliers
+
+# deleting outliers (2 of them)
+# train_size = (1458, 80)
 train_df.drop(train_df[(train_df.GrLivArea > 4000)
                        & (train_df.SalePrice < 300000)].index, inplace=True)
+train_df = train_df.reset_index(drop=True)
 
-# transform SalePrice using log
+# transform SalePrice using log(1+x)
 train_df["SalePrice"] = np.log1p(train_df["SalePrice"])
 
 # visualise the transformed SalePrice distribution
@@ -33,9 +38,10 @@ plt.title("SalePrice distribution")
 # as well as the QQ-plot
 fig = plt.figure()
 res = stats.probplot(train_df.SalePrice, plot=plt)
-plt.show()
+# plt.show()
 
 # save SalePrice as train_y and drop it as we want to have metrics columns only for our model
+# train_size = (1458, 79)
 train_y = train_df["SalePrice"]
 train_df.drop(columns="SalePrice", inplace=True)
 
@@ -65,6 +71,7 @@ for col in mode_cols:
     test_df[col] = test_df[col].fillna(test_df[col].mode()[0])
 
 # Dropping Utilities column because
+# train_size = (1458, 78)
 train_df.drop(columns="Utilities", inplace=True)
 test_df.drop(columns="Utilities", inplace=True)
 
@@ -81,8 +88,6 @@ train_missing = train_df.isnull().sum()
 test_missing = test_df.isnull().sum()
 
 print(train_missing[train_missing != 0], test_missing[test_missing != 0])
-print(train_df[["LotFrontage", "LotArea"]][train_df.LotFrontage == 0])
-print(train_df[train_df["LotFrontage"].isnull()])
 
 # convert numbers to string to indicate it's a categorical column
 cat_col = ["MSSubClass", "OverallCond", "YrSold", "MoSold"]
@@ -93,15 +98,22 @@ for col in cat_col:
 
 numerical_cols = train_df.dtypes[train_df.dtypes != "object"].index
 
+# transforming data into a normal distribution (to ensure heteroscedasticity)
 skewness = train_df[numerical_cols].apply(lambda x: skew(x)).sort_values(ascending=False)
 skew_df = pd.DataFrame({'Skewness': skewness})
 
 skew_df.drop(skew_df[abs(skew_df.Skewness) < 0.75].index, inplace=True)
-
 skewed_cols = skew_df.index
-print(skewed_cols)
 
-pt = PowerTransformer(standardize=False)
+# I would like to use box-cox
+# but it requires that all the values to be strictly positive (> 0),
+# hence I am doing a "plus one" on all data points,
+# similar to what I did when doing log transformation
+train_df[skewed_cols] = train_df[skewed_cols].add(1)
+test_df[skewed_cols] = test_df[skewed_cols].add(1)
+
+# instantiate a powertransformer
+pt = PowerTransformer(method='box-cox')
 pt.fit(train_df[skewed_cols])
 train_df[skewed_cols] = pd.DataFrame(pt.transform(train_df[skewed_cols]))
 test_df[skewed_cols] = pd.DataFrame(pt.transform(test_df[skewed_cols]))
@@ -110,12 +122,11 @@ full_df = pd.concat([train_df, test_df])
 
 train_df = pd.get_dummies(train_df)
 test_df = pd.get_dummies(test_df)
-print(train_df[train_df["LotFrontage"].isnull()])
-print(test_df[test_df["LotFrontage"].isnull()])
-train_df
 
 missing_cols = set(train_df.columns) - set(test_df.columns)
 for col in missing_cols:
     test_df[col] = 0
-
 test_df = test_df[train_df.columns]
+print(train_df.shape, test_df.shape)
+
+# train_df and test-df have the same number of columns: good to go!
