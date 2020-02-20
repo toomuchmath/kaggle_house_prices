@@ -5,7 +5,7 @@ import seaborn as sns
 from scipy import stats
 from scipy.stats import norm, skew
 from scipy.special import boxcox1p
-from sklearn.preprocessing import PowerTransformer
+from sklearn.preprocessing import PowerTransformer, StandardScaler
 
 # train_size = (1460, 81)
 train_df = pd.read_csv("data/train.csv")
@@ -51,8 +51,7 @@ none_cols = ["PoolQC", "MiscFeature", "Alley", "Fence", "FireplaceQu", "GarageCo
 zero_cols = ["GarageYrBlt", "MasVnrArea", "BsmtHalfBath", "BsmtFullBath", "BsmtFinSF1",
              "BsmtFinSF2", "BsmtUnfSF", "TotalBsmtSF", "GarageArea", "GarageCars"]
 
-mode_cols = ["Electrical", "MSZoning", "Functional", "Exterior1st", "Exterior2nd",
-             "SaleType", "KitchenQual"]
+mode_cols = ["Electrical", "KitchenQual"]
 
 drop_cols = ["Utilities"]
 
@@ -81,6 +80,41 @@ test_df["LotFrontage"] = test_df.groupby("Neighborhood")["LotFrontage"].transfor
     lambda x: x.fillna(x.median())
 )
 
+train_df["MSZoning"] = train_df.groupby("Neighborhood")["MSZoning"].transform(
+    lambda x: x.fillna(x.mode())
+)
+test_df["MSZoning"] = test_df.groupby("Neighborhood")["MSZoning"].transform(
+    lambda x: x.fillna(x.mode())
+)
+
+train_df["Functional"] = train_df.groupby("Neighborhood")["Functional"].transform(
+    lambda x: x.fillna(x.mode())
+)
+test_df["Functional"] = test_df.groupby("Neighborhood")["Functional"].transform(
+    lambda x: x.fillna(x.mode())
+)
+
+train_df["Exterior1st"] = train_df.groupby("Neighborhood")["Exterior1st"].transform(
+    lambda x: x.fillna(x.mode())
+)
+test_df["Exterior1st"] = test_df.groupby("Neighborhood")["Exterior1st"].transform(
+    lambda x: x.fillna(x.mode())
+)
+
+train_df["Exterior2nd"] = train_df.groupby("Neighborhood")["Exterior2nd"].transform(
+    lambda x: x.fillna(x.mode())
+)
+test_df["Exterior2nd"] = test_df.groupby("Neighborhood")["Exterior2nd"].transform(
+    lambda x: x.fillna(x.mode())
+)
+
+train_df["SaleType"] = train_df.groupby("Neighborhood")["SaleType"].transform(
+    lambda x: x.fillna(x.mode())
+)
+test_df["SaleType"] = test_df.groupby("Neighborhood")["SaleType"].transform(
+    lambda x: x.fillna(x.mode())
+)
+
 # make sure that there are no null data in both train and test datasets
 train_missing = train_df.isnull().sum()
 test_missing = test_df.isnull().sum()
@@ -88,7 +122,7 @@ test_missing = test_df.isnull().sum()
 print(train_missing[train_missing != 0], test_missing[test_missing != 0])
 
 # convert numbers to string to indicate it's a categorical column
-cat_col = ["MSSubClass", "OverallCond", "YrSold", "MoSold", "YearBuilt", "YearRemodAdd", "GarageYrBlt"]
+cat_col = ["MSSubClass", "YrSold", "MoSold"]
 
 for col in cat_col:
     train_df[col] = train_df[col].astype(str)
@@ -124,6 +158,8 @@ test_df[skewed_cols] = pd.DataFrame(pt.transform(test_df[skewed_cols]))
 train_df = pd.get_dummies(train_df)
 test_df = pd.get_dummies(test_df)
 
+print(train_df.shape, test_df.shape)
+
 # on inspection, test_df has fewer columns than train_df after .get_dummies()
 missing_cols = set(train_df.columns) - set(test_df.columns)
 for col in missing_cols:
@@ -131,7 +167,11 @@ for col in missing_cols:
 test_df = test_df[train_df.columns]
 print(train_df.shape, test_df.shape)
 
+standard_scaler = StandardScaler()
+train_df = pd.DataFrame(standard_scaler.fit_transform(train_df))
+test_df = pd.DataFrame(standard_scaler.transform(test_df))
+
 # train_df and test-df have the same number of columns: good to go!
-train_df.to_csv("data/train_df.csv")
-test_df.to_csv("data/test_df.csv")
-train_y.to_csv("data/train_y.csv")
+train_df.to_csv("data/train_df.csv", index=False)
+test_df.to_csv("data/test_df.csv", index=False)
+train_y.to_csv("data/train_y.csv", index=False)
