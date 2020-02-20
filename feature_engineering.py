@@ -68,7 +68,7 @@ for col in mode_cols:
     train_df[col] = train_df[col].fillna(train_df[col].mode()[0])
     test_df[col] = test_df[col].fillna(test_df[col].mode()[0])
 
-# Dropping Utilities column because
+# Dropping Utilities column because most columns have the value
 # train_size = (1458, 78)
 train_df.drop(columns="Utilities", inplace=True)
 test_df.drop(columns="Utilities", inplace=True)
@@ -88,15 +88,19 @@ test_missing = test_df.isnull().sum()
 print(train_missing[train_missing != 0], test_missing[test_missing != 0])
 
 # convert numbers to string to indicate it's a categorical column
-cat_col = ["MSSubClass", "OverallCond", "YrSold", "MoSold"]
+cat_col = ["MSSubClass", "OverallCond", "YrSold", "MoSold", "YearBuilt", "YearRemodAdd", "GarageYrBlt"]
 
 for col in cat_col:
     train_df[col] = train_df[col].astype(str)
     test_df[col] = test_df[col].astype(str)
 
+# add a new feature
+train_df["TotalSF"] = train_df["TotalBsmtSF"] + train_df["1stFlrSF"] + train_df["2ndFlrSF"]
+test_df["TotalSF"] = test_df["TotalBsmtSF"] + test_df["1stFlrSF"] + test_df["2ndFlrSF"]
+
 numerical_cols = train_df.dtypes[train_df.dtypes != "object"].index
 
-# transforming data into a normal distribution (to ensure heteroscedasticity)
+# transforming data into a normal distribution (to remove heteroscedasticity)
 skewness = train_df[numerical_cols].apply(lambda x: skew(x)).sort_values(ascending=False)
 skew_df = pd.DataFrame({'Skewness': skewness})
 
@@ -128,3 +132,6 @@ test_df = test_df[train_df.columns]
 print(train_df.shape, test_df.shape)
 
 # train_df and test-df have the same number of columns: good to go!
+train_df.to_csv("data/train_df.csv")
+test_df.to_csv("data/test_df.csv")
+train_y.to_csv("data/train_y.csv")

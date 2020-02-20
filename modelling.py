@@ -9,7 +9,7 @@ from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
 from sklearn.model_selection import KFold, cross_val_score, train_test_split
 from sklearn.metrics import make_scorer, mean_squared_error
 import xgboost as xgb
-# import lightgbm as lgb
+import lightgbm as lgb
 
 train_df = pd.read_csv("data/train_df.csv")
 train_y = pd.read_csv("data/train_y.csv")
@@ -27,10 +27,10 @@ def get_rmse(model, n_fold):
 
 # Lasso Regression
 # Using RobustScaler() to make this model less sensitive to outliers
-lasso = make_pipeline(RobustScaler(), Lasso(alpha=0.0005, random_state=1))
+lasso = make_pipeline(RobustScaler(), Lasso(alpha=0.005, random_state=1))
 
 # Elastic Net Regression
-enet = make_pipeline(RobustScaler(), ElasticNet(alpha=0.0005, l1_ratio=9, random_state=1))
+enet = make_pipeline(RobustScaler(), ElasticNet(alpha=0.005, l1_ratio=9, random_state=1))
 
 # Kernel Ridge Regression
 krr = KernelRidge(alpha=0.6, kernel='polynomial', degree=2, coef0=2.5)
@@ -46,13 +46,12 @@ xgb_reg = xgb.XGBRegressor(colsample_bytree=0.4603, gamma=0.0468, learning_rate=
                            subsample=0.5213, silent=True, random_state=1, nthread=-1)
 
 # LightGBM
-"""
 lgbm_reg = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate=0.05, n_estimators=720,
                              max_bin=55, bagging_fraction=0.8, bagging_freq=5, feature_fraction=0.2319,
                              feature_fraction_seed=9, bagging_seed=9, min_data_in_leaf=6,
                              min_sum_hessian_in_leaf=11)
-"""
 
+# calculating scores of different models
 lasso_scores = get_rmse(lasso, 5)
 print("Lasso scores: {} \n Average score: {}".format(lasso_scores, lasso_scores.mean()))
 
