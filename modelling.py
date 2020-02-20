@@ -22,7 +22,7 @@ def get_rmse(model, n_fold):
     rmse = cross_val_score(model, train_df.values, train_y, cv=k_fold,
                            scoring="neg_root_mean_squared_error")
 
-    return rmse
+    return -rmse
 
 
 # Lasso Regression
@@ -52,6 +52,7 @@ lgbm_reg = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate
                              feature_fraction_seed=9, bagging_seed=9, min_data_in_leaf=6,
                              min_sum_hessian_in_leaf=11)
 """
+
 lasso_scores = get_rmse(lasso, 5)
 print("Lasso scores: {} \n Average score: {}".format(lasso_scores, lasso_scores.mean()))
 
@@ -60,3 +61,15 @@ print("Elastic Net scores: {} \n Average score: {}".format(enet_scores, enet_sco
 
 krr_scores = get_rmse(krr, 5)
 print("Kernel Ridge scores: {} \n Average score: {}".format(krr_scores, krr_scores.mean()))
+
+gbr_scores = get_rmse(gbr, 5)
+print("Gradient Boosting scores: {} \n Average score: {}".format(gbr_scores, gbr_scores.mean()))
+"""
+xgb_scores = get_rmse(xgb_reg, 5)
+print("eXtreme Gradient Boosting scores: {} \n Average score: {}".format(xgb_scores, xgb_scores.mean()))
+"""
+estimators = [('enet', enet), ('krr', krr), ('gb', gbr)]
+
+stack_reg = StackingRegressor(estimators=estimators, final_estimator=lasso)
+stack_reg_scores = get_rmse(stack_reg, 5)
+print("Stacking Regressor scores: {} \n Average score: {}".format(stack_reg_scores, stack_reg_scores.mean()))
