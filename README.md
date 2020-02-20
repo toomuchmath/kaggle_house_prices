@@ -9,5 +9,5 @@ my plans were as follows:
 3. Deal with missing values
 4. Convert numerical columns (which are meant to be categorical) to categorical columns
 5. Use box-cox transformation (in particular, I used [powertransformer](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html)
-in sklearn) to ensure normality (and hence heteroscedasticity)
+in sklearn) to ensure normality (and hence removing heteroscedasticity)
 6. Get dummies
