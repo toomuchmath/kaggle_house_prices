@@ -8,7 +8,7 @@ from sklearn.preprocessing import RobustScaler
 from sklearn.base import BaseEstimator, TransformerMixin, RegressorMixin, clone
 from sklearn.model_selection import KFold, cross_val_score, train_test_split
 import xgboost as xgb
-# import lightgbm as lgb
+import lightgbm as lgb
 
 train_df = pd.read_csv("data/train_df.csv")
 test_df = pd.read_csv("data/test_df.csv")
@@ -47,10 +47,10 @@ xgb_reg = xgb.XGBRegressor(colsample_bytree=0.4603, gamma=0.0468, learning_rate=
                            subsample=0.5213, silent=True, random_state=1, nthread=-1)
 
 # LightGBM
-"""lgb_reg = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate=0.05, n_estimators=720,
+lgb_reg = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate=0.05, n_estimators=720,
                             max_bin=55, bagging_fraction=0.8, bagging_freq=5, feature_fraction=0.2319,
                             feature_fraction_seed=9, bagging_seed=9, min_data_in_leaf=6,
-                            min_sum_hessian_in_leaf=11)"""
+                            min_sum_hessian_in_leaf=11)
 
 regressors = [lasso, enet, krr, gbr, xgb_reg]
 
@@ -58,23 +58,11 @@ for reg in regressors:
     scores = get_rmse(reg, 5)
     print("{} scores: {} \n Average score: {}".format(str(reg), scores, scores.mean()))
 
-
+# Stacking Regressor
 estimators = [('enet', enet), ('krr', krr), ('gbr', gbr)]
 
 stack_reg = StackingRegressor(estimators=estimators, final_estimator=lasso)
 stack_reg_scores = get_rmse(stack_reg, 5)
 print("Stacking Regressor scores: {} \n Average score: {}".format(stack_reg_scores, stack_reg_scores.mean()))
 
-"""
-stack_reg.fit(train_df, train_y)
-output_df["SalePrice"] = stack_reg.predict(test_df)
-output_df["SalePrice"] = np.expm1(output_df["SalePrice"])
-output_df.to_csv("data/submission_stack_5.csv", index=False)
-
-
-lgb_reg.fit(train_df, train_y)
-output_df["SalePrice"] = lgb_reg.predict(test_df)
-output_df["SalePrice"] = np.expm1(output_df["SalePrice"])
-output_df.to_csv("data/submission_lgb.csv", index=False)
-"""
 
