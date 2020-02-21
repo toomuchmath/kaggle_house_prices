@@ -53,7 +53,7 @@ zero_cols = ["GarageYrBlt", "MasVnrArea", "BsmtHalfBath", "BsmtFullBath", "BsmtF
 
 mode_cols = ["Electrical", "KitchenQual"]
 
-groupby_mode_cols = ["MSZoning", "Functional", "Exterior1st", "Exterior2nd", "SaleType"]
+groupby_mode_cols = ["Functional", "Exterior1st", "Exterior2nd", "SaleType"]
 
 drop_cols = ["Utilities"]
 
@@ -76,6 +76,10 @@ for col in groupby_mode_cols:
     test_df[col] = test_df.groupby("Neighborhood")[col].transform(
         lambda x: x.fillna(x.mode()[0])
     )
+
+test_df["MSZoning"] = test_df.groupby("MSSubClass")["MSZoning"].transform(
+    lambda x: x.fillna(x.median())
+)
 
 train_df["LotFrontage"] = train_df.groupby("Neighborhood")["LotFrontage"].transform(
     lambda x: x.fillna(x.median())
