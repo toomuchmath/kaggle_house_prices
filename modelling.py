@@ -11,10 +11,9 @@ import xgboost as xgb
 import lightgbm as lgb
 
 train_df = pd.read_csv("data/train_df.csv")
-train_y = pd.read_csv("data/train_y.csv")
 test_df = pd.read_csv("data/test_df.csv")
 output_df = pd.read_csv("data/sample_submission.csv")
-
+train_y = pd.read_csv("data/train_y.csv")
 train_y = np.array(train_y).ravel()
 
 
@@ -52,6 +51,12 @@ lgb_reg = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate=
                             max_bin=55, bagging_fraction=0.8, bagging_freq=5, feature_fraction=0.2319,
                             feature_fraction_seed=9, bagging_seed=9, min_data_in_leaf=6,
                             min_sum_hessian_in_leaf=11)
+
+models = [lasso, enet, krr, gbr, xgb_reg, lgb_reg]
+for model in models:
+    scores = get_rmse(model, 5)
+    print("{} scores: {} \n Average score: {}".format(str(model), scores, scores.mean()))
+
 """
 # calculating scores of different models
 lasso_scores = get_rmse(lasso, 5)
@@ -75,17 +80,19 @@ print("Light Gradient Boosting scores: {} \n Average score: {}".format(lgb_score
 estimators = [('enet', enet), ('krr', krr), ('gbr', gbr)]
 
 stack_reg = StackingRegressor(estimators=estimators, final_estimator=lasso)
-# stack_reg_scores = get_rmse(stack_reg, 5)
-# print("Stacking Regressor scores: {} \n Average score: {}".format(stack_reg_scores, stack_reg_scores.mean()))
+stack_reg_scores = get_rmse(stack_reg, 5)
+print("Stacking Regressor scores: {} \n Average score: {}".format(stack_reg_scores, stack_reg_scores.mean()))
 
+"""
 stack_reg.fit(train_df, train_y)
 output_df["SalePrice"] = stack_reg.predict(test_df)
 output_df["SalePrice"] = np.expm1(output_df["SalePrice"])
 output_df.to_csv("data/submission_stack_5.csv", index=False)
 
-"""
+
 lgb_reg.fit(train_df, train_y)
 output_df["SalePrice"] = lgb_reg.predict(test_df)
 output_df["SalePrice"] = np.expm1(output_df["SalePrice"])
-output_df.to_csv("data/submission_lgb.csv", index=False)"""
+output_df.to_csv("data/submission_lgb.csv", index=False)
+"""
 
