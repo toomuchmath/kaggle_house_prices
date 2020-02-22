@@ -4,25 +4,21 @@ import matplotlib.pyplot as plt
 import seaborn as sns
 from scipy import stats
 from scipy.stats import norm, skew
-from scipy.special import boxcox1p
-from sklearn.preprocessing import PowerTransformer, StandardScaler, Normalizer
+from sklearn.preprocessing import PowerTransformer, StandardScaler
 
-# train_size = (1460, 81)
-train_df = pd.read_csv("data/train.csv")
+train_df = pd.read_csv("data/train.csv")    # train_size = (1460, 81)
 test_df = pd.read_csv("data/test.csv")
 
 # save ID column and drop it as it's not needed for prediction
-# train_size = (1460, 80)
 train_id = train_df["Id"]
 test_id = test_df["Id"]
 
-train_df.drop(columns="Id", inplace=True)
+train_df.drop(columns="Id", inplace=True)   # train_size = (1460, 80)
 test_df.drop(columns="Id", inplace=True)
 
 # deleting outliers (2 of them)
-# train_size = (1458, 80)
 train_df.drop(train_df[(train_df.GrLivArea > 4000)
-                       & (train_df.SalePrice < 300000)].index, inplace=True)
+                       & (train_df.SalePrice < 300000)].index, inplace=True)    # train_size = (1458, 80)
 train_df = train_df.reset_index(drop=True)
 
 # transform SalePrice using log(1+x)
@@ -39,9 +35,8 @@ res = stats.probplot(train_df.SalePrice, plot=plt)
 # plt.show()
 
 # save SalePrice as train_y and drop it as we want to have metrics columns only for our model
-# train_size = (1458, 79)
 train_y = train_df["SalePrice"]
-train_df.drop(columns="SalePrice", inplace=True)
+train_df.drop(columns="SalePrice", inplace=True)    # train_size = (1458, 79)
 
 # dealing with missing values
 none_cols = ["PoolQC", "MiscFeature", "Alley", "Fence", "FireplaceQu", "GarageCond",
@@ -54,8 +49,6 @@ zero_cols = ["GarageYrBlt", "MasVnrArea", "BsmtHalfBath", "BsmtFullBath", "BsmtF
 mode_cols = ["Electrical", "KitchenQual"]
 
 groupby_mode_cols = ["Functional", "Exterior1st", "Exterior2nd", "SaleType"]
-
-drop_cols = ["Utilities"]
 
 for col in none_cols:
     train_df[col] = train_df[col].fillna("None")
@@ -91,8 +84,7 @@ test_df["LotFrontage"] = test_df.groupby("Neighborhood")["LotFrontage"].transfor
 
 
 # Dropping Utilities column because most rows have the same value
-# train_size = (1458, 78)
-train_df.drop(columns="Utilities", inplace=True)
+train_df.drop(columns="Utilities", inplace=True)    # train_size = (1458, 78)
 test_df.drop(columns="Utilities", inplace=True)
 
 
@@ -125,11 +117,11 @@ skewed_cols = skew_df.index
 # I would like to use box-cox
 # but it requires that all the values to be strictly positive (> 0),
 # hence I am doing a "plus one" on all data points,
-# similar to what I did when doing log transformation
+# similar to what I did when performing log transformation on SalePrice
 train_df[skewed_cols] = train_df[skewed_cols].add(1)
 test_df[skewed_cols] = test_df[skewed_cols].add(1)
 
-# instantiate a powertransformer
+# instantiate a powertransformer and do a box-cox transformation on the skewed columns
 pt = PowerTransformer(method='box-cox')
 pt.fit(train_df[skewed_cols])
 train_df[skewed_cols] = pd.DataFrame(pt.transform(train_df[skewed_cols]))
@@ -144,13 +136,12 @@ missing_cols = set(train_df.columns) - set(test_df.columns)
 for col in missing_cols:
     test_df[col] = 0
 test_df = test_df[train_df.columns]
-print(train_df.shape, test_df.shape)
+print(train_df.shape, test_df.shape)    # same shape so we are ready to go!
 
 standard_scaler = StandardScaler()
 train_df = pd.DataFrame(standard_scaler.fit_transform(train_df))
 test_df = pd.DataFrame(standard_scaler.transform(test_df))
 
-# train_df and test-df have the same number of columns: good to go!
 train_df.to_csv("data/train_df.csv", index=False)
 test_df.to_csv("data/test_df.csv", index=False)
 train_y.to_csv("data/train_y.csv", index=False)
