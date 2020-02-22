@@ -2,7 +2,7 @@
 
 The work in this repository is based on a kaggle competition [House Prices: Advanced Regression Techniques](https://www.kaggle.com/c/house-prices-advanced-regression-techniques).
 The aim of doing this project is to consolidate my knowledge of machine learning algorithms as well as
-to experiment with the newer models that I have recently picked up, namely Light Gradient Boosting Method
+to experiment with the models that I have recently picked up, namely Light Gradient Boosting method
 and Stacking method.
 
 Prior to starting, I went through some very helpful notebooks and would highly recommend anyone who 
@@ -15,15 +15,15 @@ are about to work on this competition to have a look at them:
 I started out doing exploratory data analysis to get a good overview of my data - both train and test. 
 Some notable findings are: 
 
-1. SalePrice in train data shows 
+1. `SalePrice` in train data shows 
     * positive skewness (skewness: 1.882876)
     * longer-than-normal-distribution tail (kurtosis: 6.536282)
     * peak at around 110,000
     
     ![SalePrice_histogram](./figures/SalePrice_histogram.png)
 
-2. The normal probability plot confirms that SalePrice doesn't follow a normal distribution. I will 
-   have to do a log-transformation on SalePrice so that it approximates to a normal distribution. 
+2. The normal probability plot confirms that `SalePrice` doesn't follow a normal distribution. I will 
+   have to do a log-transformation on `SalePrice` so that it approximates to a normal distribution. 
 
     ![SalePrice_qqplot](./figures/SalePrice_qqplot.png)
 
