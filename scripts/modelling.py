@@ -9,10 +9,10 @@ from sklearn.model_selection import KFold, cross_val_score
 import xgboost as xgb
 import lightgbm as lgb
 
-train_df = pd.read_csv("data/train_df.csv")
-test_df = pd.read_csv("data/test_df.csv")
-output_df = pd.read_csv("data/sample_submission.csv")
-train_y = pd.read_csv("data/train_y.csv")
+train_df = pd.read_csv("../data/train_df.csv")
+test_df = pd.read_csv("../data/test_df.csv")
+output_df = pd.read_csv("../data/sample_submission.csv")
+train_y = pd.read_csv("../data/train_y.csv")
 train_y = np.array(train_y).ravel()
 
 
