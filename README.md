@@ -33,14 +33,14 @@ Some notable findings are:
     * `GarageCars` and `GarageAreas`
     
     It might worth considering removing one of the two in these pairs to remove multicollinearity. 
-    However, it shouldn't be too much of a concern as multicollinearity only affect the coefficients
+    However, it shouldn't be too much of a concern as multicollinearity only affects the coefficients
     but not the predictions or precision of the predictions.
     
     ![cm](./figures/Correlation_heatmap.png)
 
-4. Focusing on the top 10 highly correlated (to SalePrice) metrics, we have `OverallQual`, `GrLivArea` 
+4. Focusing on the top 10 highly correlated (to `SalePrice`) metrics, we have `OverallQual`, `GrLivArea` 
    and `GarageCars` clinching the top three spots. Since `GarageCars` and `GarageArea` are correlated
-   (logically the garage area does determine the number of cars you can fit in the garage), I would 
+   (logically the garage area determines the number of cars you can fit in the garage), I would 
    consider removing one of them. I also further explored the top two metrics: `OverallQual` and 
    `GrLivArea`.
     
@@ -51,7 +51,7 @@ Some notable findings are:
    ![OverallQual_boxplot](./figures/OverallQual_boxplot.png)
 
 6. There are two outliers in the `SalePrice` against `GrLivArea` scatterplot. While I could salvage these
-   two data points by replacing with mean or median, I think it is ok to remove them for this case since
+   two data points by replacing with mean, median or cap them, I think it is ok to remove them for this case since
    they don't make up a large proportion of the data. However, should I have time to experiment in the 
    future, I would like to try including these two data points (rectified) in my models and compare the 
    results.
