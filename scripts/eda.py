@@ -6,8 +6,8 @@ from scipy import stats
 from scipy.stats import norm, skew
 import os
 
-train_df = pd.read_csv("data/train.csv")
-test_df = pd.read_csv("data/test.csv")
+train_df = pd.read_csv("../data/train.csv")
+test_df = pd.read_csv("../data/test.csv")
 
 print("shape: train_df {}; test_df {}".format(train_df.shape, test_df.shape))
 # shape: train_df (1460, 81); test_df (1459, 80)
