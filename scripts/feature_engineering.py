@@ -6,8 +6,8 @@ from scipy import stats
 from scipy.stats import norm, skew
 from sklearn.preprocessing import PowerTransformer, StandardScaler
 
-train_df = pd.read_csv("data/train.csv")    # train_size = (1460, 81)
-test_df = pd.read_csv("data/test.csv")
+train_df = pd.read_csv("../data/train.csv")    # train_size = (1460, 81)
+test_df = pd.read_csv("../data/test.csv")
 
 # save ID column and drop it as it's not needed for prediction
 train_id = train_df["Id"]
