@@ -51,7 +51,7 @@ lgb_reg = lgb.LGBMRegressor(objective='regression', num_leaves=5, learning_rate=
                             feature_fraction_seed=9, bagging_seed=9, min_data_in_leaf=6,
                             min_sum_hessian_in_leaf=11)
 
-regressors = [lasso, enet, krr, gbr, xgb_reg]
+regressors = [lasso, enet, krr, gbr, xgb_reg, lgb_reg]
 
 for reg in regressors:
     scores = get_rmse(reg, 5)
@@ -63,5 +63,3 @@ estimators = [('enet', enet), ('krr', krr), ('gbr', gbr)]
 stack_reg = StackingRegressor(estimators=estimators, final_estimator=lasso)
 stack_reg_scores = get_rmse(stack_reg, 5)
 print("Stacking Regressor scores: {} \n Average score: {}".format(stack_reg_scores, stack_reg_scores.mean()))
-
-
