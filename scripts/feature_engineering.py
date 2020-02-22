@@ -82,11 +82,9 @@ test_df["LotFrontage"] = test_df.groupby("Neighborhood")["LotFrontage"].transfor
     lambda x: x.fillna(x.median())
 )
 
-
 # Dropping Utilities column because most rows have the same value
 train_df.drop(columns="Utilities", inplace=True)    # train_size = (1458, 78)
 test_df.drop(columns="Utilities", inplace=True)
-
 
 # make sure that there are no null data in both train and test datasets
 train_missing = train_df.isnull().sum()
