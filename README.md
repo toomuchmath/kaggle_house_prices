@@ -2,7 +2,7 @@
 
 This is based on a beginners' kaggle competition [House Prices: Advanced Regression Techniques](https://www.kaggle.com/c/house-prices-advanced-regression-techniques)
 
-In [featureengineering.py](https://github.com/toomuchmath/house_prices/blob/master/feature_engineering.py), 
+In [featureengineering.py](https://github.com/toomuchmath/house_prices/blob/master/scripts/feature_engineering.py), 
 my plans were as follows:
 1. Remove `Id` and delete outliers
 2. Log transform `SalePrice` and set it aside for later use
