@@ -64,16 +64,16 @@ fig6.axis(ymin=0, ymax=800000)
 fig6.set_title("(Above) Ground Living Area scatter plot")
 
 # missing data in train_df
-total = train_df.isnull().sum().sort_values(ascending=False)
-ratio = (train_df.isnull().sum() / train_df.isnull().count()).sort_values(ascending=False)
-missing_data = pd.concat([total, ratio], axis=1, keys=['Total', 'Ratio'])
-missing_data.head(20)
+train_total = train_df.isnull().sum().sort_values(ascending=False)
+train_ratio = (train_df.isnull().sum() / train_df.isnull().count()).sort_values(ascending=False)
+train_missing_data = pd.concat([train_total, train_ratio], axis=1, keys=['Total', 'Ratio'])
+print(train_missing_data.head(20))
 
 # missing data in test_df
-total = test_df.isnull().sum().sort_values(ascending=False)
-ratio = (test_df.isnull().sum() / test_df.isnull().count()).sort_values(ascending=False)
-missing_data = pd.concat([total, ratio], axis=1, keys=['Total', 'Ratio'])
-missing_data.head(40)
+test_total = test_df.isnull().sum().sort_values(ascending=False)
+test_ratio = (test_df.isnull().sum() / test_df.isnull().count()).sort_values(ascending=False)
+test_missing_data = pd.concat([test_total, test_ratio], axis=1, keys=['Total', 'Ratio'])
+print(test_missing_data.head(40))
 
 # looking at skewness of each numerical features
 numerical_cols = train_df.dtypes[train_df.dtypes != "object"].index
