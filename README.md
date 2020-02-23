@@ -96,8 +96,8 @@ Some of my findings are as follows (for script go to [eda.py](https://github.com
    respectively. In these two simplified columns, there will be two values: 0 and 1, where 0 indicates 
    no miscellaneous feature or no pool and 1 for the opposites. 
    
-   As for the remaining columns, including those not displayed in this list, I would like to apply box-cox
-   transformation. 
+   As for the remaining columns, including those not displayed in this list, I would like to apply the
+   box-cox transformation. 
 
 
 
