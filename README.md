@@ -13,7 +13,7 @@ are about to work on this competition to have a look at them:
 3. [Stacked Regressions](https://www.kaggle.com/serigne/stacked-regressions-top-4-on-leaderboard)
 
 I started out doing exploratory data analysis to get a good overview of my data - both train and test. 
-Some notable findings are: 
+Some of my findings are: 
 
 1. `SalePrice` in train data shows 
     * positive skewness (skewness: 1.882876)
@@ -57,6 +57,47 @@ Some notable findings are:
    results.
    
    ![GrLivArea_scatterplot](./figures/GrLivArea_scatterplot.png)
+
+7. The top 5 columns with substantial missing data are same in both `train_df` and `test_df`.
+    
+    ``` 
+    train_df top 5 columns with missing data
+                    Total   Ratio
+    PoolQC          1453    0.995205
+    MiscFeature     1406    0.963014
+    Alley           1369    0.937671
+    Fence           1179    0.807534
+    FireplaceQu     690     0.472603
+    ```
+    
+    ``` 
+    test_df top 5 columns with missing data
+                    Total   Ratio
+    PoolQC          1456    0.997944
+    MiscFeature     1408    0.965045
+    Alley           1352    0.926662
+    Fence           1169    0.801234
+    FireplaceQu     730     0.500343
+    ```
+
+8. Skewness gives us some flavour of whether a feature approximates to a normal distribution. The top
+   5 positively skewed features and their skewness are as follows:
+   
+    ```
+    train_df top 5 columns with significant skew
+                    Skewness
+    MiscVal         24.451640
+    PoolArea        14.813135
+    LotArea         12.195142
+    3SsnPorch       10.293752
+    LowQualFinSF    9.002080
+    ```
+   For `MiscVal` and `PoolArea`, I planned to simplify the features to `HasMiscFeat` and `HasPool` 
+   respectively. In these two simplified columns, there will be two values: 0 and 1, where 0 indicates 
+   no miscellaneous feature or no pool and 1 for the opposites. 
+   
+   As for the remaining columns, including those not displayed in this list, I would like to apply box-cox
+   transformation. 
 
 In [featureengineering.py](https://github.com/toomuchmath/house_prices/blob/master/scripts/feature_engineering.py), 
 my plans were as follows:
