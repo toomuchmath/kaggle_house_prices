@@ -13,7 +13,7 @@ are about to work on this competition to have a look at them:
 3. [Stacked Regressions](https://www.kaggle.com/serigne/stacked-regressions-top-4-on-leaderboard)
 
 I started out doing exploratory data analysis to get a good overview of my data - both train and test. 
-Some of my findings are: 
+Some of my findings are as follows (for script go to [eda.py](https://github.com/toomuchmath/house_prices/blob/master/scripts/eda.py)): 
 
 1. `SalePrice` in train data shows 
     * positive skewness (skewness: 1.882876)
@@ -99,15 +99,6 @@ Some of my findings are:
    As for the remaining columns, including those not displayed in this list, I would like to apply box-cox
    transformation. 
 
-In [featureengineering.py](https://github.com/toomuchmath/house_prices/blob/master/scripts/feature_engineering.py), 
-my plans were as follows:
-1. Remove `Id` and delete outliers
-2. Log transform `SalePrice` and set it aside for later use
-3. Deal with missing values
-4. Convert numerical columns (which are meant to be categorical) to categorical columns
-5. Use box-cox transformation (in particular, I used [powertransformer](https://scikit-learn.org/stable/modules/generated/sklearn.preprocessing.PowerTransformer.html)
-in sklearn) to ensure normality (and hence removing heteroscedasticity)
-6. Get dummies
 
 
 
